@@ -3,7 +3,7 @@
 set -e
 
 targetVersion=3.4.2
-targetURL=https://github.com/opencv/opencv/archive/"$targetVersion".tar.gz
+targetURL=https://github.com/opencv/opencv/archive/$targetVersion.tar.gz
 workDir=DeployOpenCV
 buildDir=$workDir/Build
 installPrefix=/var/tmp/OpenCV
