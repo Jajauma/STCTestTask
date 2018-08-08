@@ -9,8 +9,8 @@ option(BUILD_UNIT_TESTS "Build unit tests" OFF)
 find_package(OpenCV 3.0.0 REQUIRED COMPONENTS imgcodecs)
 
 set(sources
-    Main.cpp
-    MainProgram.cpp)
+    Program/Main.cpp
+    Program/MainProgram.cpp)
 
 if (BUILD_UNIT_TESTS)
     set (sources ${sources}
