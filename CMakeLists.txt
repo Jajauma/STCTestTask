@@ -7,6 +7,7 @@ option(BUILD_UNIT_TESTS "Build unit tests" OFF)
 
 # Use -DCMAKE_PREFIX_PATH=... to set custom search path
 find_package(OpenCV 3.0.0 REQUIRED COMPONENTS imgcodecs)
+find_package(OpenMP REQUIRED)
 
 set(sources
     Program/Main.cpp
@@ -21,7 +22,8 @@ endif()
 set(mainTarget integral_image)
 add_executable(${mainTarget} ${sources})
 target_link_libraries(${mainTarget}
-    PRIVATE opencv_imgcodecs)
+    PRIVATE opencv_imgcodecs
+    PRIVATE OpenMP::OpenMP_CXX)
 
 if (BUILD_UNIT_TESTS)
     find_package(GTest REQUIRED)
