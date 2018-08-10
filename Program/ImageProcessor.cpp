@@ -19,6 +19,26 @@ using namespace Program;
 
 namespace {
 char MessageBuffer[4096];
+
+using IntensityType      = float;
+auto const IntensityCode = CV_32F;
+
+void
+calcSATPointRecurrently(cv::Mat& m, int y, int x)
+{
+    assert(y >= 0 && y < m.rows);
+    assert(x >= 0 && x < m.cols);
+    assert(m.type() == IntensityCode);
+
+    if (x && y)
+        m.at<IntensityType>(y, x) += m.at<IntensityType>(y - 1, x)
+                                     + m.at<IntensityType>(y, x - 1)
+                                     - m.at<IntensityType>(y - 1, x - 1);
+    else if (y && !x)
+        m.at<IntensityType>(y, x) += m.at<IntensityType>(y - 1, x);
+    else if (!y && x)
+        m.at<IntensityType>(y, x) += m.at<IntensityType>(y, x - 1);
+}
 } /* namespace */
 
 struct ImageProcessor::Implementation
@@ -32,7 +52,7 @@ ImageProcessor::ImageProcessor(char const* imagePath)
     assert(imagePath != nullptr);
 
     cv::Mat image{cv::imread(imagePath, cv::IMREAD_UNCHANGED)};
-    if (!image.data)
+    if (!image.data || !image.rows || !image.cols)
     {
         std::snprintf(MessageBuffer,
                       sizeof(MessageBuffer),
@@ -41,7 +61,7 @@ ImageProcessor::ImageProcessor(char const* imagePath)
         throw std::runtime_error{MessageBuffer};
     }
 
-    image.convertTo(image, CV_32F);
+    image.convertTo(image, IntensityCode);
     cv::split(image, impl->imageChannels);
 }
 
