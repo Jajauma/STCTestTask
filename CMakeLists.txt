@@ -10,7 +10,8 @@ find_package(OpenCV 3.0.0 REQUIRED COMPONENTS imgcodecs)
 
 set(sources
     Program/Main.cpp
-    Program/MainProgram.cpp)
+    Program/MainProgram.cpp
+    Program/Options.cpp)
 
 if (BUILD_UNIT_TESTS)
     set (sources ${sources}
