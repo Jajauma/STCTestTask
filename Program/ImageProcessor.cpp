@@ -81,8 +81,9 @@ ImageProcessor::~ImageProcessor() = default;
 void
 ImageProcessor::run()
 {
-    for (auto& c : impl->imageChannels)
-        buildSAT(c);
+#pragma omp parallel for
+    for (auto i = 0U; i < impl->imageChannels.size(); ++i)
+        buildSAT(impl->imageChannels[i]);
 }
 
 std::ostream&

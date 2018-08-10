@@ -3,6 +3,7 @@
 
 #include <omp.h>
 
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <exception>
@@ -21,7 +22,16 @@ mainProgram(int argc, char* argv[])
             try
             {
                 ImageProcessor proc{path};
+
+                std::fprintf(stderr, "Processing %s ... ", path);
+                std::fflush(stderr);
+
+                auto const t0 = std::chrono::steady_clock::now();
                 proc.run();
+                std::chrono::duration<double, std::milli> const elapsed{
+                    std::chrono::steady_clock::now() - t0};
+
+                std::fprintf(stderr, "done in %.1f ms\n", elapsed.count());
             }
             catch (std::exception& e)
             {
