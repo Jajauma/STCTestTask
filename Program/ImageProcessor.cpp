@@ -22,30 +22,30 @@ char MessageBuffer[4096];
 
 template <typename IntensityT>
 void
-calcSATPointRecurrently(cv::Mat_<IntensityT>& m, int y, int x)
+calcSATPointRecurrently(cv::Mat_<IntensityT>& I, int y, int x)
 {
-    assert(y >= 0 && y < m.rows);
-    assert(x >= 0 && x < m.cols);
+    assert(y >= 0 && y < I.rows);
+    assert(x >= 0 && x < I.cols);
 
     if (x && y)
-        m(y, x) += m(y - 1, x) + m(y, x - 1) - m(y - 1, x - 1);
+        I(y, x) += I(y - 1, x) + I(y, x - 1) - I(y - 1, x - 1);
     else if (y && !x)
-        m(y, x) += m(y - 1, x);
+        I(y, x) += I(y - 1, x);
     else if (!y && x)
-        m(y, x) += m(y, x - 1);
+        I(y, x) += I(y, x - 1);
 }
 
 template <typename IntensityT>
-void
-buildSATRecurrently(cv::Mat_<IntensityT>& m)
+cv::Mat_<IntensityT>&
+buildSAT(cv::Mat_<IntensityT>& I)
 {
-    for (int i = 0; i < m.rows; ++i)
-        for (int row = i, col = 0; row >= 0 && col < m.cols; --row, ++col)
-            calcSATPointRecurrently(m, row, col);
-    for (int i = 1; i < m.cols; ++i)
-        for (int row = m.rows - 1, col = i; row >= 0 && col < m.cols;
-             --row, ++col)
-            calcSATPointRecurrently(m, row, col);
+    for (int i = 0; i < I.rows; ++i)
+        for (int y = i, x = 0; y >= 0 && x < I.cols; --y, ++x)
+            calcSATPointRecurrently(I, y, x);
+    for (int i = 1; i < I.cols; ++i)
+        for (int y = I.rows - 1, x = i; y >= 0 && x < I.cols; --y, ++x)
+            calcSATPointRecurrently(I, y, x);
+    return I;
 }
 
 using IntensityType      = float;
@@ -82,7 +82,7 @@ void
 ImageProcessor::run()
 {
     for (auto& c : impl->imageChannels)
-        buildSATRecurrently(c);
+        buildSAT(c);
 }
 
 std::ostream&
@@ -100,7 +100,7 @@ TEST(ImageProcessor, TypeTraits)
     EXPECT_TRUE(std::is_move_assignable<ImageProcessor>::value);
 }
 
-TEST(ImageProcessor, BuildSATRecurrently_10x1)
+TEST(ImageProcessor, BuildSAT_10x1)
 {
     cv::Mat_<int> data{cv::Size{10, 1}};
     data << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
@@ -108,11 +108,10 @@ TEST(ImageProcessor, BuildSATRecurrently_10x1)
     cv::Mat_<int> const expected{cv::Size{10, 1}};
     expected << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
 
-    EXPECT_NO_THROW(buildSATRecurrently(data));
-    EXPECT_EQ(cv::countNonZero(data != expected), 0);
+    EXPECT_FALSE(cv::countNonZero(buildSAT(data) != expected));
 }
 
-TEST(ImageProcessor, BuildSATRecurrently_1x10)
+TEST(ImageProcessor, BuildSAT_1x10)
 {
     cv::Mat_<int> data{cv::Size{1, 10}};
     data << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
@@ -120,11 +119,10 @@ TEST(ImageProcessor, BuildSATRecurrently_1x10)
     cv::Mat_<int> const expected{cv::Size{1, 10}};
     expected << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
 
-    EXPECT_NO_THROW(buildSATRecurrently(data));
-    EXPECT_EQ(cv::countNonZero(data != expected), 0);
+    EXPECT_FALSE(cv::countNonZero(buildSAT(data) != expected));
 }
 
-TEST(ImageProcessor, BuildSATRecurrently_2x3)
+TEST(ImageProcessor, BuildSAT_2x3)
 {
     cv::Mat_<int> data{cv::Size{2, 3}};
     data << 0, 1, 2, 3, 4, 5;
@@ -132,11 +130,10 @@ TEST(ImageProcessor, BuildSATRecurrently_2x3)
     cv::Mat_<int> const expected{cv::Size{2, 3}};
     expected << 0, 1, 2, 6, 6, 15;
 
-    EXPECT_NO_THROW(buildSATRecurrently(data));
-    EXPECT_EQ(cv::countNonZero(data != expected), 0);
+    EXPECT_FALSE(cv::countNonZero(buildSAT(data) != expected));
 }
 
-TEST(ImageProcessor, BuildSATRecurrently_6x6)
+TEST(ImageProcessor, BuildSAT_6x6)
 {
     cv::Mat_<int> data{cv::Size{6, 6}};
     data << 31, 2, 4, 33, 5, 36, 12, 26, 9, 10, 29, 25, 13, 17, 21, 22, 20, 18,
@@ -147,7 +144,6 @@ TEST(ImageProcessor, BuildSATRecurrently_6x6)
         135, 200, 254, 333, 80, 148, 197, 278, 346, 444, 110, 186, 263, 371,
         450, 555, 111, 222, 333, 444, 555, 666;
 
-    EXPECT_NO_THROW(buildSATRecurrently(data));
-    EXPECT_EQ(cv::countNonZero(data != expected), 0);
+    EXPECT_FALSE(cv::countNonZero(buildSAT(data) != expected));
 }
 #endif /* BUILD_UNIT_TESTS */
