@@ -27,8 +27,11 @@ char MessageBuffer[4096];
 int
 parseThreadCount(char const* opt)
 {
-    char* end;
+    assert(opt != nullptr);
+
+    char* end{nullptr};
     long const ret{std::strtol(opt, &end, 10)};
+
     if (errno == ERANGE || end == opt || *end != '\0' || ret < 0
         || ret > MaxInt)
     {
@@ -38,6 +41,7 @@ parseThreadCount(char const* opt)
                       opt);
         throw std::runtime_error{MessageBuffer};
     }
+
     return static_cast<int>(ret);
 }
 } /* namespace */
