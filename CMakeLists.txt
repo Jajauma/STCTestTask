@@ -10,6 +10,7 @@ find_package(OpenCV 3.0.0 REQUIRED COMPONENTS imgcodecs)
 find_package(OpenMP REQUIRED)
 
 set(sources
+    Program/ImageProcessor.cpp
     Program/Main.cpp
     Program/MainProgram.cpp
     Program/Options.cpp)
