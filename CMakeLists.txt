@@ -36,6 +36,9 @@ if (BUILD_UNIT_TESTS)
 endif()
 
 if (DOXYGEN_FOUND)
+    set(DOXYGEN_EXTRACT_ALL YES)
+    set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
+    set(DOXYGEN_SOURCE_BROWSER YES)
     # cmake >= 3.9.0
     doxygen_add_docs(doc Program)
 endif()

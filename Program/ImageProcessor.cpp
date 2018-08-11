@@ -21,6 +21,13 @@ using namespace Program;
 namespace {
 char MessageBuffer[4096];
 
+/** \brief Calculate a point in the summed-area table
+ *
+ * Calculate a point in the summed-area table using recurrent formula
+ * I(x,y)=i(x,y)+I(x,y-1)+I(x-1,y)-I(x-1,y-1)
+ *
+ * \sa https://en.wikipedia.org/wiki/Summed-area_table
+ */
 template <typename IntensityT>
 void
 calcSATPointRecurrently(cv::Mat_<IntensityT>& I, int y, int x)
@@ -36,6 +43,11 @@ calcSATPointRecurrently(cv::Mat_<IntensityT>& I, int y, int x)
         I(y, x) += I(y, x - 1);
 }
 
+/** \brief Build a summed-area table
+ *
+ * Build a summed-area table by iterating over all diagonals of the matrix
+ * starting from the topleft corner.
+ */
 template <typename IntensityT>
 cv::Mat_<IntensityT>&
 buildSAT(cv::Mat_<IntensityT>& I)
