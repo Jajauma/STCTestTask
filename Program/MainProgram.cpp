@@ -14,7 +14,6 @@
 #include <cstring>
 #include <exception>
 #include <fstream>
-#include <iostream>
 
 namespace {
 char const*
