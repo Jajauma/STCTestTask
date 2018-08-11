@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <iterator>
 #include <stdexcept>
 #include <vector>
 
@@ -90,7 +91,13 @@ std::ostream&
 ImageProcessor::exportResults(std::ostream& os) const
 {
     for (auto const& c : impl->imageChannels)
-        os << c << "\n\n";
+        for (auto it = c.begin(); it != c.end(); ++it)
+        {
+            auto const next = std::next(it);
+            os << *it
+               << (next == c.end() ? "\n\n"
+                                   : (next.pos().y == it.pos().y ? " " : "\n"));
+        }
     return os;
 }
 
