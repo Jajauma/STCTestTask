@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.3.0)
 project(STCTestTask CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -8,6 +8,7 @@ option(BUILD_UNIT_TESTS "Build unit tests" OFF)
 # Use -DCMAKE_PREFIX_PATH=... to set custom search path
 find_package(OpenCV 3.0.0 REQUIRED COMPONENTS imgcodecs)
 find_package(OpenMP REQUIRED)
+find_package(Doxygen)
 
 set(sources
     Program/ImageProcessor.cpp
@@ -32,4 +33,10 @@ if (BUILD_UNIT_TESTS)
         PRIVATE BUILD_UNIT_TESTS)
     target_link_libraries(${mainTarget}
         PRIVATE GTest::GTest)
+endif()
+
+if (DOXYGEN_FOUND)
+    doxygen_add_docs(doc
+       Program
+       COMMENT "Generate documentation from the annotated sources")
 endif()
