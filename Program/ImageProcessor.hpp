@@ -14,7 +14,7 @@ public:
     ~ImageProcessor();
 
     void run();
-    std::ostream& dumpResult(std::ostream& os) const;
+    std::ostream& exportResults(std::ostream& os) const;
 
 private:
     struct Implementation;

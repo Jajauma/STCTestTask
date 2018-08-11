@@ -87,8 +87,10 @@ ImageProcessor::run()
 }
 
 std::ostream&
-ImageProcessor::dumpResult(std::ostream& os) const
+ImageProcessor::exportResults(std::ostream& os) const
 {
+    for (auto const& c : impl->imageChannels)
+        os << c << "\n\n";
     return os;
 }
 
