@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3.0)
+cmake_minimum_required(VERSION 3.9.0)
 project(STCTestTask CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -36,7 +36,6 @@ if (BUILD_UNIT_TESTS)
 endif()
 
 if (DOXYGEN_FOUND)
-    doxygen_add_docs(doc
-       Program
-       COMMENT "Generate documentation from the annotated sources")
+    # cmake >= 3.9.0
+    doxygen_add_docs(doc Program)
 endif()
